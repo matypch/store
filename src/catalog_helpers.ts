@@ -1,13 +1,14 @@
 //segun la version de handler puede quedar obsoleta esta opcion
-import { HelperOptions }  from "handlebars";
+import Handlebars, { HelperOptions }  from "handlebars";
 import { stringify } from "querystring";
 import { escape } from "querystring";
+
 const getData = (options:HelperOptions) => {
      return {...options.data.root, ...options.hash}
 };
 export const navigationUrl = (options: HelperOptions) => {
-    const { page, pageSize } = getData(options);
-    return "/?" + stringify({ page, pageSize });
+    const { page, pageSize, category, searchTerm } = getData(options);
+    return "/?" + stringify({ page, pageSize, category, searchTerm });
 }
 export const escapeUrl = (url: string) => escape(url);
 export const pageButtons = (options: HelperOptions) => {
@@ -28,4 +29,32 @@ export const pageSizeOptions = (options: HelperOptions) => {
             selected: pageSize === size ? "selected": ""})
     })
     return output;
+}
+
+export const categoryButtons = (options: HelperOptions)=>{
+    const { category, categories} = getData(options);
+    let output = "";
+    for(let i =0; i< categories.length; i++){
+        output+= options.fn({
+            id:categories[i].id,
+            name: categories[i].name,
+            selected: category === categories[i].id
+        })
+    }
+    return output;
+}
+export const highlight = (value: string, options: HelperOptions) => {
+    const { searchTerm } = getData(options);
+    if (searchTerm && searchTerm !== "") {
+        const regexp = new RegExp(searchTerm, "ig");
+        const mod = value.replaceAll(regexp, "<strong>$&</strong>");
+        return new Handlebars.SafeString(mod);      
+    }
+    return value;
+}
+const formatter = new Intl.NumberFormat("en-us", {
+    style: "currency", currency: "USD"
+})
+export const currency = (value: number) => {
+    return formatter.format(value);
 }

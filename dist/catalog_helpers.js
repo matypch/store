@@ -1,14 +1,19 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pageSizeOptions = exports.pageButtons = exports.escapeUrl = exports.navigationUrl = void 0;
+exports.currency = exports.highlight = exports.categoryButtons = exports.pageSizeOptions = exports.pageButtons = exports.escapeUrl = exports.navigationUrl = void 0;
+//segun la version de handler puede quedar obsoleta esta opcion
+const handlebars_1 = __importDefault(require("handlebars"));
 const querystring_1 = require("querystring");
 const querystring_2 = require("querystring");
 const getData = (options) => {
     return { ...options.data.root, ...options.hash };
 };
 const navigationUrl = (options) => {
-    const { page, pageSize } = getData(options);
-    return "/?" + (0, querystring_1.stringify)({ page, pageSize });
+    const { page, pageSize, category, searchTerm } = getData(options);
+    return "/?" + (0, querystring_1.stringify)({ page, pageSize, category, searchTerm });
 };
 exports.navigationUrl = navigationUrl;
 const escapeUrl = (url) => (0, querystring_2.escape)(url);
@@ -34,3 +39,33 @@ const pageSizeOptions = (options) => {
     return output;
 };
 exports.pageSizeOptions = pageSizeOptions;
+const categoryButtons = (options) => {
+    const { category, categories } = getData(options);
+    let output = "";
+    for (let i = 0; i < categories.length; i++) {
+        output += options.fn({
+            id: categories[i].id,
+            name: categories[i].name,
+            selected: category === categories[i].id
+        });
+    }
+    return output;
+};
+exports.categoryButtons = categoryButtons;
+const highlight = (value, options) => {
+    const { searchTerm } = getData(options);
+    if (searchTerm && searchTerm !== "") {
+        const regexp = new RegExp(searchTerm, "ig");
+        const mod = value.replaceAll(regexp, "<strong>$&</strong>");
+        return new handlebars_1.default.SafeString(mod);
+    }
+    return value;
+};
+exports.highlight = highlight;
+const formatter = new Intl.NumberFormat("en-us", {
+    style: "currency", currency: "USD"
+});
+const currency = (value) => {
+    return formatter.format(value);
+};
+exports.currency = currency;

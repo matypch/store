@@ -1,5 +1,6 @@
 import { DataTypes, Sequelize } from "sequelize";
 import { CategoryModel, ProductModel, SupplierModel } from "./catalog_models";
+import { HelperOptions } from "handlebars";
 const primaryKey = {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true }
 };
@@ -27,3 +28,4 @@ export const initializeCatalogModels = (sequelize: Sequelize) => {
     SupplierModel.hasMany(ProductModel,
         { foreignKey: "supplierId", as: "products"});
 }
+
