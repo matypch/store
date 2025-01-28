@@ -1,0 +1,11 @@
+<div class="h2 ">
+    500 - Internal Server Error
+</div>
+<div class="text-center">
+    <a href="" class="btn btn-secondary" href="/">OK</a>
+</div>
+{{#if (isDevelopment) }}
+    <div class="h4 bg-danger text-white p-1 mt-2">Error Details</div>
+    <div class="h5 p1"> {{ error.message }}</div>
+    <div class="font-monospace p-1"> {{ error.stack }} </div>
+{{/if }}
